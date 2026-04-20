@@ -26,12 +26,5 @@ export default async function handler(req, res) {
   );
 
   const data = await response.json();
-  
-  // Retourner la réponse complète pour voir l'erreur
-  if (!data.candidates) {
-    return res.status(200).json({ content: [{ text: JSON.stringify(data) }] });
-  }
-
-  const text = data.candidates[0].content.parts[0].text;
-  res.status(200).json({ content: [{ text }] });
+  return res.status(200).json({ content: [{ text: JSON.stringify(data) }] });
 }
