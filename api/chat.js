@@ -8,7 +8,6 @@ export default async function handler(req, res) {
 
   const { messages, system } = req.body;
 
-  // Convertir le format Anthropic → Gemini
   const contents = messages.map(m => ({
     role: m.role === 'assistant' ? 'model' : 'user',
     parts: [{ text: m.content }]
@@ -27,8 +26,12 @@ export default async function handler(req, res) {
   );
 
   const data = await response.json();
-  const text = data.candidates?.[0]?.content?.parts?.[0]?.text || "Désolé, je n'ai pas pu répondre.";
+  
+  // Retourner la réponse complète pour voir l'erreur
+  if (!data.candidates) {
+    return res.status(200).json({ content: [{ text: JSON.stringify(data) }] });
+  }
 
-  // Retourner dans le format Anthropic pour que le HTML n'ait pas besoin de changer
+  const text = data.candidates[0].content.parts[0].text;
   res.status(200).json({ content: [{ text }] });
 }
